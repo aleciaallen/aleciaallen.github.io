@@ -1,0 +1,9 @@
+{
+  "name": "copywriter-portfolio",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-manifest.mjs",
+    "preview": "node scripts/build-manifest.mjs && npx serve ."
+  }
+}

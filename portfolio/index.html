@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alecia Allen, Copywriter</title>
+<meta name="description" content="Copywriter who writes words people actually read.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caprasimo&family=Gochi+Hand&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+  <div class="wrap">
+    <nav aria-label="Main">
+      <a class="logo" href="#top">Alecia Allen</a>
+      <ul>
+        <li><a href="#work">Work</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Say hi</a></li>
+      </ul>
+    </nav>
+
+    <header class="hero" id="top">
+      <p class="hero-kicker">copywriter, professional overthinker</p>
+
+      <div class="drafts" aria-live="polite">
+        <h1 class="draft new" id="draft">I write words people actually read.</h1>
+      </div>
+
+      <div class="hero-foot">
+        <button class="btn-draft" id="redraft" type="button">Try another draft</button>
+        <span class="draft-count" id="count">draft 1 of 6</span>
+      </div>
+
+      <p class="hero-intro">
+        Headlines, brand voice, websites and the odd cereal box. I help brands sound like
+        <span class="hl">someone you'd want to sit next to at dinner</span>.
+      </p>
+    </header>
+
+    <section id="work" aria-labelledby="work-h">
+      <h2 id="work-h">Some things I've written</h2>
+      <!-- Filled in automatically from the files in /samples -->
+      <ol class="work-list" id="work-list" aria-busy="true"></ol>
+      <p class="work-status" id="work-status">fetching the good stuff…</p>
+    </section>
+
+    <section id="about" aria-labelledby="about-h">
+      <h2 id="about-h">Hi, I'm Alecia</h2>
+      <div class="about-grid">
+        <div>
+          <p>I've spent eight years turning "we need some copy" into words that do a job. Before that I wrote greeting cards, which taught me how much a sentence can carry in very little space.</p>
+          <p>I work best with teams who are happy to be surprised. I'll bring three safe options and one that makes you laugh nervously. Sometimes that's the one.</p>
+        </div>
+        <aside class="sticky" aria-label="What I can help with">
+          <h3>I can help with</h3>
+          <ul>
+            <li>Headlines &amp; taglines</li>
+            <li>Website copy</li>
+            <li>Brand voice guides</li>
+            <li>Packaging &amp; product naming</li>
+            <li>Emails people open</li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <section class="contact" id="contact" aria-labelledby="contact-h">
+      <h2 id="contact-h">Got words that need wrangling?</h2>
+      <p>Tell me what you're making. I reply within two working days, usually with too many ideas.</p>
+      <div class="email-row">
+        <a class="email" href="mailto:alecia264@gmail.com" id="email">alecia264@gmail.com</a>
+        <button class="btn-copy" id="copy" type="button">Copy email</button>
+      </div>
+    </section>
+
+    <footer>
+      <p>© <span id="year"></span> Alecia Allen. Written by a human, proofread twice.</p>
+    </footer>
+  </div>
+
+<script>
+  // ===== Edit these: each one is a "draft" of the hero headline =====
+  const drafts = [
+    "I write words people actually read.",
+    "Copy that pulls its weight.",
+    "Fewer words. Better ones.",
+    "Your brand, but it finally sounds like someone.",
+    "I'll make the headline. You take the credit.",
+    "Okay, this one's the keeper."
+  ];
+
+  const wrapEl = document.querySelector(".drafts");
+  const countEl = document.getElementById("count");
+  let i = 0;
+
+  document.getElementById("redraft").addEventListener("click", () => {
+    const current = document.getElementById("draft");
+    wrapEl.querySelectorAll(".old").forEach(el => el.remove());
+
+    current.removeAttribute("id");
+    current.classList.remove("new");
+    current.classList.add("old");
+    current.setAttribute("aria-hidden", "true");
+
+    i = (i + 1) % drafts.length;
+    const next = document.createElement("h1");
+    next.className = "draft new";
+    next.id = "draft";
+    next.textContent = drafts[i];
+    wrapEl.appendChild(next);
+
+    countEl.textContent = `draft ${i + 1} of ${drafts.length}`;
+  });
+
+  const copyBtn = document.getElementById("copy");
+  copyBtn.addEventListener("click", async () => {
+    const email = document.getElementById("email").textContent;
+    try {
+      await navigator.clipboard.writeText(email);
+      copyBtn.textContent = "Copied!";
+    } catch {
+      copyBtn.textContent = "Press Ctrl+C";
+    }
+    setTimeout(() => (copyBtn.textContent = "Copy email"), 1800);
+  });
+
+  document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+
+<script>
+  // ===== Work list: built from samples/index.json, which the GitHub Action
+  //       generates from every .md file in /samples =====
+  (async () => {
+    const list = document.getElementById("work-list");
+    const status = document.getElementById("work-status");
+
+    // small helper: create an element with text (never raw HTML)
+    const el = (tag, props = {}, text) => {
+      const node = Object.assign(document.createElement(tag), props);
+      if (text) node.textContent = text;
+      return node;
+    };
+
+    try {
+      const res = await fetch("samples/index.json", { cache: "no-cache" });
+      if (!res.ok) throw new Error(res.status);
+      const samples = await res.json();
+
+      if (!samples.length) {
+        status.textContent = "new work coming soon. the ink is still drying.";
+        return;
+      }
+
+      for (const s of samples) {
+        const href = `sample.html?s=${encodeURIComponent(s.slug)}`;
+        const li = el("li", { className: "piece" });
+
+        const meta = el("div", { className: "piece-meta" });
+        meta.append(el("h3", {}, s.client || s.title));
+        if (s.type) meta.append(el("p", {}, s.type));
+
+        const main = el("div");
+        if (s.brief) {
+          const brief = el("p", { className: "brief" });
+          brief.append(el("strong", {}, "The brief:"), " " + s.brief);
+          main.append(brief);
+        }
+        const line = el("p", { className: "line" });
+        line.append(el("a", { href }, s.line ? `“${s.line}”` : s.title));
+        main.append(line);
+
+        const foot = el("div", { className: "piece-foot" });
+        if (s.result) foot.append(el("span", { className: "result" }, s.result));
+        foot.append(el("a", { className: "read-more", href }, "Read the whole thing"));
+        main.append(foot);
+
+        li.append(meta, main);
+        list.append(li);
+      }
+      status.remove();
+    } catch (err) {
+      status.textContent = "the samples wandered off. try refreshing?";
+      console.error("Could not load samples/index.json", err);
+    } finally {
+      list.removeAttribute("aria-busy");
+    }
+  })();
+</script>
+</body>
+</html>

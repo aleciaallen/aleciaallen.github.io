@@ -1,0 +1,3 @@
+node_modules/
+# built automatically on each push
+samples/index.json
