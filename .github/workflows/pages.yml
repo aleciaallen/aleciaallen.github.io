@@ -27,13 +27,14 @@ jobs:
           node-version: 20
 
       - name: Build samples/index.json from the .md files
+        working-directory: portfolio
         run: node scripts/build-manifest.mjs
 
       - uses: actions/configure-pages@v5
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: portfolio
 
   deploy:
     needs: build
